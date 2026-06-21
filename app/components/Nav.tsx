@@ -2,25 +2,24 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { personalInfo } from "@/lib/data"
+import { ArrowRight, Menu, Sun, X } from "@/lib/icons"
 
-const links = [
-  { id: "trust", label: "About" },
-  { id: "projects", label: "Work" },
+const navLinks = [
+  { id: "hero", label: "Home" },
+  { id: "services", label: "About" },
+  { id: "projects", label: "Projects" },
   { id: "experience", label: "Experience" },
-  { id: "skills", label: "Skills" },
-  { id: "testimonials", label: "Impact" },
-  { id: "process", label: "Process" },
   { id: "contact", label: "Contact" },
 ]
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [active, setActive] = useState("trust")
+  const [active, setActive] = useState("hero")
   const reduce = useReducedMotion()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener("scroll", onScroll)
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
@@ -31,13 +30,14 @@ export default function Nav() {
   }, [menuOpen])
 
   useEffect(() => {
-    const sections = links.map((l) => document.getElementById(l.id)).filter(Boolean) as HTMLElement[]
+    const ids = ["hero", "trust", "services", "projects", "experience", "workflow", "achievements", "contact"]
+    const sections = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
         if (visible?.target.id) setActive(visible.target.id)
       },
-      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.2, 0.5] }
+      { rootMargin: "-42% 0px -42% 0px", threshold: [0, 0.25] }
     )
     sections.forEach((s) => observer.observe(s))
     return () => observer.disconnect()
@@ -46,48 +46,47 @@ export default function Nav() {
   return (
     <>
       <motion.header
-        initial={reduce ? false : { y: -24, opacity: 0 }}
+        initial={reduce ? false : { y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className={`nav${scrolled || menuOpen ? " nav--solid" : ""}`}
+        transition={{ duration: 0.5 }}
+        className={`topnav${scrolled ? " topnav--scrolled" : ""}`}
       >
-        <a href="#hero" className="nav-brand">{personalInfo.name.split(" ")[0].toLowerCase()}.dev</a>
+        <a href="#hero" className="topnav-logo" aria-label="Home">
+          <span className="topnav-logo-mark">MP</span>
+        </a>
 
-        <nav className="nav-links" aria-label="Primary">
-          {links.map((l) => (
-            <a key={l.id} href={`#${l.id}`} className={`nav-link${active === l.id ? " nav-link--active" : ""}`}>
+        <nav className="topnav-links" aria-label="Primary">
+          {navLinks.map((l) => (
+            <a key={l.id} href={`#${l.id}`} className={`topnav-link${active === l.id ? " topnav-link--active" : ""}`}>
               {l.label}
               {active === l.id && !reduce && (
-                <motion.span layoutId="nav-pill" className="nav-active" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+                <motion.span layoutId="nav-underline" className="topnav-underline" transition={{ type: "spring", stiffness: 380, damping: 30 }} />
               )}
             </a>
           ))}
         </nav>
 
-        <div className="nav-end">
-          <a href="#contact" className="btn btn-primary btn-sm nav-hire">Hire Me</a>
-          <button type="button" className="nav-menu-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen}>
-            {menuOpen ? "×" : "☰"}
+        <div className="topnav-actions">
+          <a href="#contact" className="btn btn-mint btn-sm">
+            Hire Me
+            <ArrowRight size={16} strokeWidth={2} />
+          </a>
+          <button type="button" className="topnav-theme" aria-label="Theme">
+            <Sun size={18} strokeWidth={2} />
+          </button>
+          <button type="button" className="topnav-burger" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"}>
+            {menuOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
           </button>
         </div>
       </motion.header>
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.div className="nav-drawer" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            {links.map((l, i) => (
-              <motion.a
-                key={l.id}
-                href={`#${l.id}`}
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 8 }}
-                transition={{ delay: i * 0.04 }}
-                className={`nav-drawer-link${active === l.id ? " nav-link--active" : ""}`}
-              >
+          <motion.div className="topnav-drawer" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            {navLinks.map((l) => (
+              <a key={l.id} href={`#${l.id}`} onClick={() => setMenuOpen(false)} className="topnav-drawer-link">
                 {l.label}
-              </motion.a>
+              </a>
             ))}
           </motion.div>
         )}

@@ -2,14 +2,15 @@
 import { motion, useReducedMotion } from "framer-motion"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { achievements } from "@/lib/data"
+import { ChevronLeft, ChevronRight, Star } from "@/lib/icons"
 import SectionHeader from "./SectionHeader"
 import AnimatedSection from "./AnimatedSection"
 
 const ACCENTS: Record<string, string> = {
-  "#7FFFD4": "#6EF7D8",
-  "#FF7E87": "#F472B6",
-  "#FFC857": "#FBBF24",
-  "#B48EF7": "#8B5CF6",
+  "#7FFFD4": "#7FFFD4",
+  "#FF7E87": "#FF7E87",
+  "#FFC857": "#FFC857",
+  "#B48EF7": "#B48EF7",
 }
 
 function avatarFrom(title: string) {
@@ -73,12 +74,7 @@ export default function Testimonials() {
   return (
     <AnimatedSection id="testimonials" className="section">
       <div className="section-inner">
-        <SectionHeader
-          label="Impact"
-          title="What I've delivered"
-          subtitle="Standout outcomes from production projects and technical leadership"
-          accent="#FBBF24"
-        />
+        <SectionHeader label="Impact" title="What I've delivered" subtitle="Standout outcomes from production projects" accent="#FBBF24" />
 
         <div className="testimonial-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <div ref={trackRef} className="testimonial-track">
@@ -100,7 +96,11 @@ export default function Testimonials() {
                       <p className="testimonial-role">{item.subtitle}</p>
                     </div>
                   </div>
-                  <div className="testimonial-stars" aria-hidden>★★★★★</div>
+                  <div className="testimonial-stars" aria-label="5 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={14} strokeWidth={2} fill="currentColor" />
+                    ))}
+                  </div>
                   <blockquote className="testimonial-quote">&ldquo;{item.description}&rdquo;</blockquote>
                   <p className="testimonial-company" style={{ color }}>{item.subtitle}</p>
                 </motion.article>
@@ -109,8 +109,12 @@ export default function Testimonials() {
           </div>
 
           <div className="carousel-nav">
-            <button type="button" className="carousel-btn" onClick={() => scroll(-1)} aria-label="Previous">←</button>
-            <button type="button" className="carousel-btn" onClick={() => scroll(1)} aria-label="Next">→</button>
+            <button type="button" className="carousel-btn" onClick={() => scroll(-1)} aria-label="Previous">
+              <ChevronLeft size={20} strokeWidth={2} />
+            </button>
+            <button type="button" className="carousel-btn" onClick={() => scroll(1)} aria-label="Next">
+              <ChevronRight size={20} strokeWidth={2} />
+            </button>
           </div>
         </div>
       </div>

@@ -1,49 +1,44 @@
 "use client"
 import { motion, useReducedMotion } from "framer-motion"
-import { aboutCards, experience } from "@/lib/data"
-import SectionHeader from "./SectionHeader"
+import { aboutCards, experience, projectGroups } from "@/lib/data"
+import { ICON_SIZE, workflowIcons } from "@/lib/icons"
 import AnimatedSection from "./AnimatedSection"
 import { Stagger, StaggerItem } from "./motion/Stagger"
 
 const steps = [
-  { num: "01", label: "Discover", title: aboutCards[0].title, body: aboutCards[0].body, accent: "#6EF7D8" },
-  { num: "02", label: "Plan", title: aboutCards[1].title, body: aboutCards[1].body, accent: "#8B5CF6" },
-  { num: "03", label: "Build", title: aboutCards[2].title, body: aboutCards[2].body, accent: "#F472B6" },
-  { num: "04", label: "Launch", title: experience[0].role, body: experience[0].points[2], accent: "#FBBF24" },
+  { num: "01", label: "Discover", body: aboutCards[0].body, Icon: workflowIcons[0] },
+  { num: "02", label: "Plan", body: aboutCards[1].body, Icon: workflowIcons[1] },
+  { num: "03", label: "Build", body: aboutCards[2].body, Icon: workflowIcons[2] },
+  { num: "04", label: "Test", body: projectGroups[1].projects[1].features[2], Icon: workflowIcons[3] },
+  { num: "05", label: "Deploy", body: experience[0].points[2], Icon: workflowIcons[4] },
+  { num: "06", label: "Support", body: aboutCards[1].body.split("—")[1]?.trim() ?? aboutCards[1].body, Icon: workflowIcons[5] },
 ]
 
 export default function Process() {
   const reduce = useReducedMotion()
 
   return (
-    <AnimatedSection id="process" className="section section-alt">
+    <AnimatedSection id="workflow" className="section section-alt">
       <div className="section-inner">
-        <SectionHeader
-          label="How I Work"
-          title="From idea to production"
-          subtitle="A proven process for shipping scalable, maintainable software"
-          accent="#8B5CF6"
-        />
+        <div className="workflow-head">
+          <p className="eyebrow">Process</p>
+          <h2 className="section-h2">My Approach to Building Great Products</h2>
+        </div>
 
-        <div className="process-rail" aria-hidden />
-
-        <Stagger className="process-grid">
-          {steps.map((step, i) => (
-            <StaggerItem key={step.label} variant={i % 2 === 0 ? "slideLeft" : "slideRight"}>
-              <motion.article
-                className="process-card"
-                whileHover={reduce ? undefined : { y: -8 }}
-                transition={{ duration: 0.35 }}
-              >
-                <div className="process-num" style={{ color: step.accent }}>
-                  {step.num}
+        <div className="workflow-track" aria-hidden />
+        <Stagger className="workflow-steps">
+          {steps.map((s) => (
+            <StaggerItem key={s.label} variant="scaleIn">
+              <motion.div className="workflow-step" whileHover={reduce ? undefined : { y: -6 }} transition={{ duration: 0.25 }}>
+                <div className="workflow-circle">
+                  <span className="workflow-num">{s.num}</span>
+                  <span className="workflow-icon">
+                    <s.Icon size={ICON_SIZE} strokeWidth={2} />
+                  </span>
                 </div>
-                <div className="process-label" style={{ color: step.accent }}>
-                  {step.label}
-                </div>
-                <h3 className="process-title">{step.title}</h3>
-                <p className="process-body">{step.body}</p>
-              </motion.article>
+                <h3>{s.label}</h3>
+                <p>{s.body.slice(0, 90)}…</p>
+              </motion.div>
             </StaggerItem>
           ))}
         </Stagger>

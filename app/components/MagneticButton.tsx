@@ -37,7 +37,7 @@ export default function MagneticButton({ href, children, variant = "primary" }: 
       onMouseLeave={onLeave}
       style={{ x, y }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
-      className={isPrimary ? "btn btn-primary" : "btn btn-ghost"}
+      className={isPrimary ? "btn btn-mint" : "btn btn-outline"}
     >
       <span className="btn-shine" aria-hidden />
       {children}
