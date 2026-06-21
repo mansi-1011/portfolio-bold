@@ -24,7 +24,7 @@ export default function TrustMetrics() {
         <Stagger className="stats-row">
           {stats.map((s) => (
             <StaggerItem key={s.label} variant="scaleIn">
-              <motion.div className="stat-card" whileHover={reduce ? undefined : { y: -4 }} transition={{ duration: 0.25 }}>
+              <motion.div className="stat-card stat-card--motion" whileHover={reduce ? undefined : { y: -4, scale: 1.02 }} transition={{ duration: 0.3 }}>
                 <span className="stat-icon" style={{ background: `${s.color}18`, color: s.color }}>
                   <s.Icon size={ICON_SIZE_LG} strokeWidth={2} />
                 </span>

@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from "framer-motion"
 import { aboutCards, achievements } from "@/lib/data"
 import { ArrowRight, ICON_SIZE_LG, serviceIcons } from "@/lib/icons"
 import AnimatedSection from "./AnimatedSection"
-import { FadeIn } from "./motion/Stagger"
+import { Stagger, StaggerItem } from "./motion/Stagger"
 
 const services = [
   ...aboutCards.map((c, i) => ({
@@ -27,39 +27,57 @@ export default function WhatIDo() {
     <AnimatedSection id="services" className="section">
       <div className="section-inner">
         <div className="services-split">
-          <FadeIn y={32}>
-            <div className="services-intro">
+          <Stagger className="services-intro">
+            <StaggerItem>
               <h2 className="services-heading">
                 Turning <span className="text-mint">Ideas</span> Into Powerful{" "}
                 <span className="text-purple">Digital Solutions</span>
               </h2>
+            </StaggerItem>
+            <StaggerItem>
               <p className="services-lead">
                 End-to-end development — from architecture and UI to deployment and long-term support.
               </p>
-              <a href="#projects" className="btn btn-mint">
+            </StaggerItem>
+            <StaggerItem>
+              <a href="#projects" className="btn btn-mint btn-glow btn-arrow-wrap" data-cursor="hover">
                 Explore My Work
-                <ArrowRight size={16} strokeWidth={2} />
+                <ArrowRight size={16} strokeWidth={2} className="btn-arrow" />
               </a>
-            </div>
-          </FadeIn>
+            </StaggerItem>
+          </Stagger>
 
-          <div className="services-grid">
-            {services.map((s, i) => (
-              <FadeIn key={s.title} y={24} delay={i * 0.05}>
+          <Stagger className="services-grid" fast>
+            {services.map((s) => (
+              <StaggerItem key={s.title}>
                 <motion.article
                   className="service-card"
-                  whileHover={reduce ? undefined : { y: -6, borderColor: "rgba(127,255,212,0.25)" }}
-                  transition={{ duration: 0.25 }}
+                  data-cursor="hover"
+                  whileHover={
+                    reduce
+                      ? undefined
+                      : { y: -6, borderColor: "rgba(127,255,212,0.25)" }
+                  }
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <span className="service-icon" style={{ background: `${s.accent}15`, color: s.accent }}>
+                  <motion.span
+                    className="service-icon"
+                    style={{ background: `${s.accent}15`, color: s.accent }}
+                    whileHover={reduce ? undefined : { rotate: 8, scale: 1.06 }}
+                    animate={reduce ? undefined : { scale: [1, 1.04, 1] }}
+                    transition={{
+                      rotate: { duration: 0.35 },
+                      scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                  >
                     <s.Icon size={ICON_SIZE_LG} strokeWidth={2} />
-                  </span>
+                  </motion.span>
                   <h3 className="service-title">{s.title}</h3>
                   <p className="service-body">{s.body}</p>
                 </motion.article>
-              </FadeIn>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </div>
     </AnimatedSection>

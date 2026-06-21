@@ -12,10 +12,12 @@ export default function Achievements() {
   return (
     <AnimatedSection id="achievements" className="section">
       <div className="section-inner">
-        <div className="workflow-head">
-          <p className="eyebrow">Highlights</p>
-          <h2 className="section-h2">Achievements & Values</h2>
-        </div>
+        <Stagger className="workflow-head">
+          <StaggerItem>
+            <p className="eyebrow">Highlights</p>
+            <h2 className="section-h2">Achievements & Values</h2>
+          </StaggerItem>
+        </Stagger>
 
         <Stagger className="achieve-grid">
           {items.map((item, i) => {
@@ -24,12 +26,18 @@ export default function Achievements() {
               <StaggerItem key={item.title} variant="scaleIn">
                 <motion.article
                   className="achieve-card"
-                  whileHover={reduce ? undefined : { y: -6, boxShadow: "0 20px 50px rgba(0,0,0,0.35)" }}
-                  transition={{ duration: 0.25 }}
+                  data-cursor="hover"
+                  whileHover={reduce ? undefined : { y: -6, scale: 1.02, borderColor: "rgba(127,255,212,0.3)" }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <span className="achieve-icon" style={{ color: item.accent, background: `${item.accent}15` }}>
+                  <motion.span
+                    className="achieve-icon"
+                    style={{ color: item.accent, background: `${item.accent}15` }}
+                    whileHover={reduce ? undefined : { rotate: -6, scale: 1.08 }}
+                    transition={{ duration: 0.35 }}
+                  >
                     <Icon size={ICON_SIZE_LG} strokeWidth={2} />
-                  </span>
+                  </motion.span>
                   <h3>{item.title}</h3>
                   <p>{item.description.slice(0, 100)}…</p>
                 </motion.article>

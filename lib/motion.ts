@@ -2,41 +2,51 @@ export const easeOut = [0.22, 1, 0.36, 1] as const
 
 export const spring = { type: "spring" as const, stiffness: 140, damping: 20 }
 
-export const viewport = { once: true, amount: 0.15 } as const
+export const viewport = { once: true, amount: 0.12, margin: "-80px" } as const
 
-export const viewportEager = { once: true, amount: 0.1 } as const
+export const viewportEager = { once: true, amount: 0.08 } as const
 
-export const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
+export const sectionReveal = {
+  hidden: { opacity: 0, y: 50 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: easeOut },
+    transition: { duration: 0.8, ease: easeOut },
+  },
+}
+
+export const fadeUp = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: easeOut },
   },
 }
 
 export const fadeIn = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.5, ease: easeOut } },
+  visible: { opacity: 1, transition: { duration: 0.6, ease: easeOut } },
 }
 
 export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.96 },
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.5, ease: easeOut },
+    y: 0,
+    transition: { duration: 0.7, ease: easeOut },
   },
 }
 
 export const slideFromLeft = {
-  hidden: { opacity: 0, x: -24 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: easeOut } },
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: easeOut } },
 }
 
 export const slideFromRight = {
-  hidden: { opacity: 0, x: 24 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: easeOut } },
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: easeOut } },
 }
 
 export const lineGrow = {
@@ -44,37 +54,57 @@ export const lineGrow = {
   visible: {
     scaleX: 1,
     opacity: 1,
-    transition: { duration: 0.75, ease: easeOut },
+    transition: { duration: 0.9, ease: easeOut },
   },
 }
 
 export const stagger = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.06 },
+    transition: { staggerChildren: 0.1, delayChildren: 0.08 },
   },
 }
 
 export const staggerFast = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.05, delayChildren: 0.04 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.05 },
   },
 }
 
 export const heroContainer = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.06, delayChildren: 0.12 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.2 },
   },
 }
 
 export const heroItem = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 40 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: easeOut },
+    transition: { duration: 0.7, ease: easeOut },
+  },
+}
+
+export const wordReveal = {
+  hidden: { opacity: 0, y: 24, filter: "blur(10px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.65, delay: 0.12 + i * 0.07, ease: easeOut },
+  }),
+}
+
+export const imageReveal = {
+  hidden: { opacity: 0, scale: 0.95, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.9, ease: easeOut, delay: 0.35 },
   },
 }
 

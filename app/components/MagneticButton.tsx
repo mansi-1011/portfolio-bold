@@ -6,9 +6,17 @@ interface MagneticButtonProps {
   href: string
   children: ReactNode
   variant?: "primary" | "ghost"
+  className?: string
+  "data-cursor"?: string
 }
 
-export default function MagneticButton({ href, children, variant = "primary" }: MagneticButtonProps) {
+export default function MagneticButton({
+  href,
+  children,
+  variant = "primary",
+  className = "",
+  "data-cursor": dataCursor = "hover",
+}: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement>(null)
   const reduce = useReducedMotion()
   const x = useSpring(0, { stiffness: 200, damping: 18 })
@@ -18,8 +26,8 @@ export default function MagneticButton({ href, children, variant = "primary" }: 
     if (reduce) return
     const rect = ref.current?.getBoundingClientRect()
     if (!rect) return
-    x.set((e.clientX - rect.left - rect.width / 2) * 0.18)
-    y.set((e.clientY - rect.top - rect.height / 2) * 0.18)
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.22)
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.22)
   }
 
   function onLeave() {
@@ -36,8 +44,10 @@ export default function MagneticButton({ href, children, variant = "primary" }: 
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={{ x, y }}
+      whileHover={reduce ? undefined : { scale: 1.03 }}
       whileTap={reduce ? undefined : { scale: 0.97 }}
-      className={isPrimary ? "btn btn-mint" : "btn btn-outline"}
+      className={`${isPrimary ? "btn btn-mint btn-glow" : "btn btn-outline"} ${className}`.trim()}
+      data-cursor={dataCursor}
     >
       <span className="btn-shine" aria-hidden />
       {children}

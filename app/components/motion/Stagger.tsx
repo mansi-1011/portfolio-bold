@@ -91,7 +91,7 @@ interface FadeInProps {
   y?: number
 }
 
-export function FadeIn({ children, className, style, delay = 0, y = 28 }: FadeInProps) {
+export function FadeIn({ children, className, style, delay = 0, y = 50 }: FadeInProps) {
   const reduce = useReducedMotion()
 
   if (reduce) {
@@ -109,7 +109,7 @@ export function FadeIn({ children, className, style, delay = 0, y = 28 }: FadeIn
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={viewport}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
