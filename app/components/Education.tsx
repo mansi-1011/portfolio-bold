@@ -6,21 +6,32 @@ import SectionHeader from "./SectionHeader"
 import AnimatedSection from "./AnimatedSection"
 import { Stagger, StaggerItem } from "./motion/Stagger"
 
+const ACCENT_MAP: Record<string, string> = {
+  "#7FFFD4": "#6EF7D8",
+  "#FFC857": "#FBBF24",
+}
+
 export default function Education() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
     <AnimatedSection id="education" className="section section-alt">
       <div className="section-inner-narrow">
-        <SectionHeader label="// Education" title="Education" subtitle="Degrees, institutions, and academic milestones" accent="#7FFFD4" />
+        <SectionHeader
+          label="Education"
+          title="Academic Background"
+          subtitle="Degrees, institutions, and academic milestones"
+          accent="#6EF7D8"
+        />
 
         <Stagger style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {education.map((entry, index) => {
             const isOpen = openIndex === index
+            const accent = ACCENT_MAP[entry.accent] ?? entry.accent
 
             return (
               <StaggerItem key={entry.title}>
-                <article className="edu-panel" style={{ borderColor: isOpen ? `${entry.accent}55` : "#1e1e2e" }}>
+                <article className="edu-panel" style={{ borderColor: isOpen ? `${accent}40` : undefined }}>
                   <button type="button" onClick={() => setOpenIndex(isOpen ? null : index)} className="edu-trigger">
                     <div>
                       <h3 className="card-title-sm">{entry.title}</h3>
@@ -30,11 +41,11 @@ export default function Education() {
                     </div>
                     <div className="edu-trigger-right">
                       {entry.highlight && (
-                        <span className="edu-badge" style={{ color: entry.accent, background: `${entry.accent}15`, borderColor: `${entry.accent}40` }}>
+                        <span className="edu-badge" style={{ color: accent, background: `${accent}12`, borderColor: `${accent}35` }}>
                           {entry.highlight}
                         </span>
                       )}
-                      <motion.span animate={{ rotate: isOpen ? 180 : 0 }} style={{ color: entry.accent }}>
+                      <motion.span animate={{ rotate: isOpen ? 180 : 0 }} style={{ color: accent }}>
                         ▾
                       </motion.span>
                     </div>

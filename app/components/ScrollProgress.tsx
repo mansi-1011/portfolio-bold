@@ -17,9 +17,9 @@ export default function ScrollProgress() {
         top: 0,
         left: 0,
         right: 0,
-        height: "3px",
+        height: "2px",
         transformOrigin: "0%",
-        background: "linear-gradient(90deg, #7FFFD4, #FF7E87, #FFC857, #B48EF7)",
+        background: "linear-gradient(90deg, #6EF7D8, #8B5CF6)",
         zIndex: 60,
       }}
     />

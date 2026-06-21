@@ -2,39 +2,38 @@
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion"
 import { useEffect, useMemo } from "react"
 import { personalInfo } from "@/lib/data"
-import { heroContainer, heroItem, letterPop } from "@/lib/motion"
+import { heroContainer, heroItem } from "@/lib/motion"
 import MagneticButton from "./MagneticButton"
-import Marquee from "./Marquee"
+import Counter from "./motion/Counter"
 import { Stagger, StaggerItem } from "./motion/Stagger"
 
-const stats = [
-  { value: "5+", label: "Years Experience" },
-  { value: "11+", label: "Projects Delivered" },
-  { value: "6", label: "Tech Stacks" },
-  { value: "4", label: "Cloud Platforms" },
+const heroMetrics = [
+  { value: 5, suffix: "+", label: "Years" },
+  { value: 11, suffix: "+", label: "Projects" },
+  { value: 6, suffix: "", label: "Tech Stacks" },
+  { value: 4, suffix: "", label: "Cloud Platforms" },
 ]
 
 export default function Hero() {
   const reduce = useReducedMotion()
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const springX = useSpring(mouseX, { stiffness: 60, damping: 20 })
-  const springY = useSpring(mouseY, { stiffness: 60, damping: 20 })
-  const blob1X = useTransform(springX, [-0.5, 0.5], [-40, 40])
-  const blob1Y = useTransform(springY, [-0.5, 0.5], [-30, 30])
-  const blob2X = useTransform(springX, [-0.5, 0.5], [30, -30])
-  const blob2Y = useTransform(springY, [-0.5, 0.5], [25, -25])
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 24 })
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 24 })
+  const meshX = useTransform(springX, [-0.5, 0.5], [-40, 40])
+  const meshY = useTransform(springY, [-0.5, 0.5], [-30, 30])
 
-  const titleChars = useMemo(() => {
-    const lines = [personalInfo.titleLine1, personalInfo.titleLine2]
-    let index = 0
-    return lines.map((line, lineIndex) =>
-      line.split("").map((char) => {
-        const i = index++
-        return { char, lineIndex, i }
-      })
-    )
-  }, [])
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 18 }, (_, i) => ({
+        id: i,
+        left: `${8 + ((i * 17) % 84)}%`,
+        top: `${10 + ((i * 23) % 80)}%`,
+        size: 2 + (i % 3),
+        delay: i * 0.3,
+      })),
+    []
+  )
 
   useEffect(() => {
     if (reduce) return
@@ -47,113 +46,68 @@ export default function Hero() {
   }, [mouseX, mouseY, reduce])
 
   return (
-    <>
-      <section id="hero" className="dot-grid hero-section">
+    <section id="hero" className="hero">
+      <div className="hero-ambient" aria-hidden>
+        <div className="hero-mesh" />
         {!reduce && (
           <>
-            <motion.div
-              className="hero-aurora"
-              style={{
-                width: 480,
-                height: 480,
-                background: "radial-gradient(circle, rgba(127,255,212,0.14) 0%, transparent 70%)",
-                top: "8%",
-                left: "4%",
-                x: blob1X,
-                y: blob1Y,
-              }}
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="hero-aurora"
-              style={{
-                width: 400,
-                height: 400,
-                background: "radial-gradient(circle, rgba(255,126,135,0.1) 0%, transparent 70%)",
-                bottom: "12%",
-                right: "4%",
-                x: blob2X,
-                y: blob2Y,
-              }}
-              animate={{ scale: [1.05, 0.95, 1.05] }}
-              transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="hero-aurora hero-aurora-center"
-              style={{
-                width: 700,
-                height: 300,
-                background: "radial-gradient(ellipse, rgba(180,142,247,0.07) 0%, transparent 70%)",
-                top: "35%",
-                left: "50%",
-                x: blob2X,
-                y: blob2Y,
-              }}
-              animate={{ scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            />
+            <motion.div className="hero-orb hero-orb--primary" style={{ x: meshX, y: meshY }} />
+            <motion.div className="hero-orb hero-orb--secondary" style={{ x: meshY, y: meshX }} />
+            <motion.div className="hero-orb hero-orb--accent" style={{ x: meshX, y: meshY }} />
+            {particles.map((p) => (
+              <motion.span
+                key={p.id}
+                className="hero-particle"
+                style={{ left: p.left, top: p.top, width: p.size, height: p.size }}
+                animate={{ opacity: [0.2, 0.7, 0.2], y: [0, -12, 0] }}
+                transition={{ duration: 4 + p.delay, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
+              />
+            ))}
           </>
         )}
+      </div>
 
-        <motion.div className="hero-content" variants={reduce ? undefined : heroContainer} initial="hidden" animate="visible">
-          <motion.p variants={reduce ? undefined : heroItem} className="hero-eyebrow">
-            {personalInfo.name}
-          </motion.p>
-
-          <h1 className="hero-title">
-            {titleChars.map((line, li) => (
-              <span key={li} className="hero-title-line">
-                {line.map(({ char, lineIndex, i }) => (
-                  <motion.span
-                    key={i}
-                    custom={i}
-                    variants={reduce ? undefined : letterPop}
-                    initial={reduce ? false : "hidden"}
-                    animate="visible"
-                    className={lineIndex === 1 ? "gradient-text hero-char" : "hero-char"}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </span>
-            ))}
-          </h1>
-
-          <motion.p variants={reduce ? undefined : heroItem} className="hero-tagline">
-            {personalInfo.tagline}
-          </motion.p>
-
-          <motion.div variants={reduce ? undefined : heroItem} className="hero-actions">
-            <MagneticButton href="#about">Discover More</MagneticButton>
-            <MagneticButton href="#contact" variant="ghost">
-              Hire Me
-            </MagneticButton>
-          </motion.div>
-
-          <Stagger className="hero-stats" fast delay={0.25} immediate>
-            {stats.map((s) => (
-              <StaggerItem key={s.label} variant="scaleIn">
-                <div className="hero-stat">
-                  <span className="hero-stat-value">{s.value}</span>
-                  <span className="hero-stat-label">{s.label}</span>
-                </div>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      <motion.div className="hero-content" variants={reduce ? undefined : heroContainer} initial="hidden" animate="visible">
+        <motion.div variants={reduce ? undefined : heroItem} className="hero-eyebrow">
+          <span className="hero-status-dot" />
+          {personalInfo.availability}
         </motion.div>
 
-        <div className="hero-scroll-wrap" aria-hidden>
-          <motion.span
-            className="hero-scroll"
-            animate={reduce ? undefined : { y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            ↓
-          </motion.span>
-        </div>
-      </section>
-      <Marquee />
-    </>
+        <motion.h1 variants={reduce ? undefined : heroItem} className="hero-headline">
+          <span className="hero-headline-line">{personalInfo.titleLine1}</span>
+          <span className="hero-headline-line gradient-text">{personalInfo.titleLine2}</span>
+        </motion.h1>
+
+        <motion.p variants={reduce ? undefined : heroItem} className="hero-sub">
+          {personalInfo.tagline}
+        </motion.p>
+
+        <motion.div variants={reduce ? undefined : heroItem} className="hero-cta">
+          <MagneticButton href="#contact">Hire Me</MagneticButton>
+          <MagneticButton href="#projects" variant="ghost">
+            View Projects
+          </MagneticButton>
+        </motion.div>
+
+        <Stagger className="hero-metrics" fast delay={0.35} immediate>
+          {heroMetrics.map((m) => (
+            <StaggerItem key={m.label} variant="scaleIn">
+              <div className="hero-metric">
+                <span className="hero-metric-value">
+                  <Counter value={m.value} suffix={m.suffix} />
+                </span>
+                <span className="hero-metric-label">{m.label}</span>
+              </div>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </motion.div>
+
+      <div className="hero-scroll-hint" aria-hidden>
+        <motion.span animate={reduce ? undefined : { y: [0, 8, 0] }} transition={{ duration: 2.2, repeat: Infinity }}>
+          Scroll
+        </motion.span>
+      </div>
+    </section>
   )
 }

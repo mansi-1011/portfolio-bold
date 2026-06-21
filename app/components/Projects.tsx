@@ -1,115 +1,127 @@
 "use client"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { useState, useEffect, useCallback } from "react"
-import { projectGroups, Project, AccentColor } from "@/lib/data"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { personalInfo, projectGroups, Project, AccentColor } from "@/lib/data"
 import SectionHeader from "./SectionHeader"
-import SpotlightCard from "./SpotlightCard"
 import AnimatedSection from "./AnimatedSection"
-import { FadeIn, Stagger, StaggerItem } from "./motion/Stagger"
+import { FadeIn } from "./motion/Stagger"
 
-const ACCENT_COLORS: Record<AccentColor, { bg: string; border: string; text: string }> = {
-  mint: { bg: "#7FFFD415", border: "#7FFFD4", text: "#7FFFD4" },
-  coral: { bg: "#FF7E8715", border: "#FF7E87", text: "#FF7E87" },
-  amber: { bg: "#FFC85715", border: "#FFC857", text: "#FFC857" },
-  purple: { bg: "#B48EF715", border: "#B48EF7", text: "#B48EF7" },
+const ACCENTS: Record<AccentColor, { color: string; glow: string }> = {
+  mint: { color: "#6EF7D8", glow: "rgba(110,247,216,0.15)" },
+  coral: { color: "#F472B6", glow: "rgba(244,114,182,0.15)" },
+  amber: { color: "#FBBF24", glow: "rgba(251,191,36,0.15)" },
+  purple: { color: "#8B5CF6", glow: "rgba(139,92,246,0.15)" },
 }
 
 const modalVariants = {
-  hidden: { opacity: 0, scale: 0.88, filter: "blur(8px)", y: 24 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    filter: "blur(0px)",
-    y: 0,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const },
-  },
+  hidden: { opacity: 0, scale: 0.94, y: 24 },
+  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
 }
 
-const TABS = ["Overview", "Stack", "Features"] as const
-type Tab = (typeof TABS)[number]
-
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
-  const [tab, setTab] = useState<Tab>("Overview")
-  const c = ACCENT_COLORS[project.accent]
+  const [tab, setTab] = useState<"Overview" | "Stack" | "Features">("Overview")
+  const a = ACCENTS[project.accent]
   const reduce = useReducedMotion()
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-    }
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
   return (
-    <motion.div
-      className="modal-overlay modal-overlay--light"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-    >
+    <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
       <motion.div
         variants={reduce ? undefined : modalVariants}
         initial="hidden"
         animate="visible"
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        exit={{ opacity: 0, scale: 0.96, y: 16 }}
         onClick={(e) => e.stopPropagation()}
-        className="modal-panel"
-        style={{ borderColor: `${c.border}40` }}
+        className="modal-panel modal-panel--lg"
       >
         <div className="modal-header">
           <div>
-            <div className="modal-meta" style={{ color: c.text }}>
-              {project.category} · {project.year}
-            </div>
+            <p className="modal-meta" style={{ color: a.color }}>{project.category} · {project.year}</p>
             <h2 className="modal-title">{project.title}</h2>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="btn btn-ghost modal-close">
-            ×
-          </button>
+          <button type="button" onClick={onClose} className="btn btn-ghost btn-sm modal-close" aria-label="Close">×</button>
         </div>
-
         <div className="modal-tabs">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className="modal-tab"
-              style={{ color: tab === t ? c.text : "#6b6f7e", borderBottomColor: tab === t ? c.border : "transparent" }}
-            >
+          {(["Overview", "Stack", "Features"] as const).map((t) => (
+            <button key={t} type="button" onClick={() => setTab(t)} className={`modal-tab${tab === t ? " modal-tab--active" : ""}`} style={tab === t ? { color: a.color } : undefined}>
               {t}
             </button>
           ))}
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-            {tab === "Overview" && <p className="modal-text">{project.description}</p>}
-            {tab === "Stack" && (
-              <div className="tag-row">
-                {project.tech.map((t) => (
-                  <span key={t} className="tag" style={{ color: c.text, background: c.bg, borderColor: `${c.border}40` }}>
-                    {t}
-                  </span>
-                ))}
-              </div>
-            )}
-            {tab === "Features" && (
-              <ul className="modal-list">
-                {project.features.map((f) => (
-                  <li key={f} className="modal-list-item">
-                    <span style={{ color: c.text }}>→</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
-        </AnimatePresence>
+        {tab === "Overview" && <p className="modal-text">{project.description}</p>}
+        {tab === "Stack" && (
+          <div className="tag-row">{project.tech.map((t) => <span key={t} className="pill">{t}</span>)}</div>
+        )}
+        {tab === "Features" && (
+          <ul className="modal-list">{project.features.map((f) => <li key={f} className="modal-list-item"><span style={{ color: a.color }}>→</span>{f}</li>)}</ul>
+        )}
       </motion.div>
     </motion.div>
+  )
+}
+
+function FeaturedProject({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
+  const a = ACCENTS[project.accent]
+  const reverse = index % 2 === 1
+  const reduce = useReducedMotion()
+
+  return (
+    <FadeIn y={48} delay={index * 0.05}>
+      <article className={`featured${reverse ? " featured--reverse" : ""}`}>
+        <motion.div
+          className="featured-media"
+          style={{ background: `radial-gradient(ellipse at 30% 20%, ${a.glow}, transparent 60%), linear-gradient(160deg, #0F172A, #050816)` }}
+          whileHover={reduce ? undefined : { scale: 1.02 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="featured-media-inner">
+            <span className="featured-watermark" style={{ color: a.color }}>{project.title.slice(0, 2)}</span>
+            <span className="featured-badge" style={{ color: a.color, borderColor: `${a.color}40`, background: `${a.color}10` }}>{project.category}</span>
+          </div>
+          <div className="featured-media-glow" style={{ background: a.glow }} />
+        </motion.div>
+
+        <div className="featured-body">
+          <div className="featured-meta">
+            <span>{project.year}</span>
+            <span style={{ color: a.color }}>{project.role}</span>
+          </div>
+          <h3 className="featured-title">{project.title}</h3>
+          <p className="featured-desc">{project.description}</p>
+
+          <div className="featured-blocks">
+            <div className="featured-block">
+              <span className="featured-block-label">Problem</span>
+              <p>{project.features[0]}</p>
+            </div>
+            <div className="featured-block">
+              <span className="featured-block-label">Solution</span>
+              <p>{project.description}</p>
+            </div>
+            <div className="featured-block">
+              <span className="featured-block-label">Results</span>
+              <p>{project.features.slice(1, 3).join(" · ")}</p>
+            </div>
+          </div>
+
+          <div className="tag-row featured-tags">
+            {project.tech.map((t) => <span key={t} className="pill pill--muted">{t}</span>)}
+          </div>
+
+          <div className="featured-actions">
+            {project.href ? (
+              <a href={project.href} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">View Live</a>
+            ) : null}
+            <button type="button" onClick={onOpen} className="btn btn-ghost btn-sm">Case Study</button>
+          </div>
+        </div>
+      </article>
+    </FadeIn>
   )
 }
 
@@ -118,51 +130,31 @@ export default function Projects() {
   const closeModal = useCallback(() => setSelected(null), [])
 
   return (
-    <AnimatedSection id="projects" className="section">
+    <AnimatedSection id="projects" className="section section-projects">
       <div className="section-inner">
-        <SectionHeader label="// Projects" title="Projects" subtitle="Click any card to explore overview, stack, and features" accent="#7FFFD4" />
+        <SectionHeader
+          label="Selected Work"
+          title="Featured projects"
+          subtitle="Enterprise-grade systems — architecture, delivery, and production ownership"
+          accent="#6EF7D8"
+        />
 
         {projectGroups.map((group, gi) => (
           <div key={group.title} className="project-group">
-            <FadeIn delay={gi * 0.04}>
-              <h3 className="group-title">{group.title}</h3>
-              <p className="group-subtitle">{group.subtitle}</p>
-            </FadeIn>
-
-            <Stagger className="card-grid">
-              {group.projects.map((p) => {
-                const c = ACCENT_COLORS[p.accent]
-                return (
-                  <StaggerItem key={p.title}>
-                    <SpotlightCard accent={c.border} onClick={() => setSelected(p)} className="project-card">
-                      <div className="card-accent-bar" style={{ background: `linear-gradient(90deg, ${c.border}, transparent)` }} />
-                      <div className="project-meta">
-                        <span className="project-cat" style={{ color: c.text, background: c.bg }}>
-                          {p.category}
-                        </span>
-                        <span className="project-year">{p.year}</span>
-                      </div>
-                      <h4 className="card-title-sm">{p.title}</h4>
-                      <p className="card-body">{p.description.slice(0, 120)}…</p>
-                      <div className="tag-row">
-                        {p.tech.slice(0, 3).map((t) => (
-                          <span key={t} className="tag tag-muted">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                      <span className="card-link" style={{ color: c.text }}>
-                        View Project →
-                      </span>
-                    </SpotlightCard>
-                  </StaggerItem>
-                )
-              })}
-            </Stagger>
+            {gi > 0 && (
+              <FadeIn>
+                <h3 className="group-heading">{group.title}</h3>
+                <p className="group-desc">{group.subtitle}</p>
+              </FadeIn>
+            )}
+            <div className="featured-list">
+              {group.projects.map((p, i) => (
+                <FeaturedProject key={p.title} project={p} index={gi * 10 + i} onOpen={() => setSelected(p)} />
+              ))}
+            </div>
           </div>
         ))}
       </div>
-
       <AnimatePresence>{selected && <ProjectModal project={selected} onClose={closeModal} />}</AnimatePresence>
     </AnimatedSection>
   )

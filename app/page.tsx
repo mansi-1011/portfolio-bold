@@ -1,25 +1,25 @@
 import Nav from "./components/Nav"
 import Hero from "./components/Hero"
-import About from "./components/About"
-import Achievements from "./components/Achievements"
+import TrustMetrics from "./components/TrustMetrics"
 import Projects from "./components/Projects"
-import Skills from "./components/Skills"
 import Experience from "./components/Experience"
-import Education from "./components/Education"
+import Skills from "./components/Skills"
+import Testimonials from "./components/Testimonials"
+import Process from "./components/Process"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
 
 export default function Home() {
   return (
-    <main>
+    <main className="site-main">
       <Nav />
       <Hero />
-      <About />
-      <Achievements />
+      <TrustMetrics />
       <Projects />
-      <Skills />
       <Experience />
-      <Education />
+      <Skills />
+      <Testimonials />
+      <Process />
       <Contact />
       <Footer />
     </main>

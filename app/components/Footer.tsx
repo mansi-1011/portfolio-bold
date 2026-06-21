@@ -5,36 +5,27 @@ import { viewport } from "@/lib/motion"
 
 export default function Footer() {
   const reduce = useReducedMotion()
+  const links = [...socialLinks, { label: "GitHub", href: personalInfo.github }]
 
   return (
     <motion.footer
-      className="site-footer"
-      initial={reduce ? false : { opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      className="footer"
+      initial={reduce ? false : { opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={viewport}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6 }}
     >
       <div className="footer-inner">
-        <a href="#hero" className="footer-logo">
-          {personalInfo.name.split(" ")[0].toLowerCase()}.dev
-        </a>
+        <a href="#hero" className="footer-brand">{personalInfo.name.split(" ")[0].toLowerCase()}.dev</a>
         <div className="footer-links">
-          {socialLinks.map((l) => (
-            <a key={l.label} href={l.href} target="_blank" rel="noreferrer" className="social-pill">
-              {l.label}
-            </a>
+          {links.map((l) => (
+            <a key={l.label} href={l.href} target="_blank" rel="noreferrer" className="pill pill--muted">{l.label}</a>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })}
-          className="footer-top"
-        >
-          ↑ Back to top
+        <button type="button" className="footer-top" onClick={() => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" })}>
+          Back to top ↑
         </button>
-        <p className="footer-copy">
-          Built with Next.js · {personalInfo.name} © {new Date().getFullYear()}
-        </p>
+        <p className="footer-copy">Built with Next.js · {personalInfo.name} © {new Date().getFullYear()}</p>
       </div>
     </motion.footer>
   )
