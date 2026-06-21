@@ -1,7 +1,11 @@
 "use client"
-import { useState } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { useState, useEffect, useCallback } from "react"
 import { projectGroups, Project, AccentColor } from "@/lib/data"
 import SectionHeader from "./SectionHeader"
+import SpotlightCard from "./SpotlightCard"
+import AnimatedSection from "./AnimatedSection"
+import { FadeIn, Stagger, StaggerItem } from "./motion/Stagger"
 
 const ACCENT_COLORS: Record<AccentColor, { bg: string; border: string; text: string }> = {
   mint: { bg: "#7FFFD415", border: "#7FFFD4", text: "#7FFFD4" },
@@ -10,245 +14,156 @@ const ACCENT_COLORS: Record<AccentColor, { bg: string; border: string; text: str
   purple: { bg: "#B48EF715", border: "#B48EF7", text: "#B48EF7" },
 }
 
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.88, filter: "blur(8px)", y: 24 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+    y: 0,
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const },
+  },
+}
+
 const TABS = ["Overview", "Stack", "Features"] as const
 type Tab = (typeof TABS)[number]
 
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [tab, setTab] = useState<Tab>("Overview")
   const c = ACCENT_COLORS[project.accent]
+  const reduce = useReducedMotion()
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [onClose])
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
+    <motion.div
+      className="modal-overlay modal-overlay--light"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        variants={reduce ? undefined : modalVariants}
+        initial="hidden"
+        animate="visible"
+        exit={{ opacity: 0, scale: 0.96, y: 12 }}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "#111118",
-          border: `1px solid ${c.border}40`,
-          borderRadius: "16px",
-          width: "100%",
-          maxWidth: "560px",
-          maxHeight: "90vh",
-          overflow: "auto",
-          padding: "2rem",
-        }}
+        className="modal-panel"
+        style={{ borderColor: `${c.border}40` }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+        <div className="modal-header">
           <div>
-            <div style={{ fontSize: "0.75rem", color: c.text, fontFamily: "monospace", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "0.25rem" }}>
+            <div className="modal-meta" style={{ color: c.text }}>
               {project.category} · {project.year}
             </div>
-            <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "#e8e6f0" }}>{project.title}</h2>
+            <h2 className="modal-title">{project.title}</h2>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close project details"
-            style={{
-              background: "none",
-              border: "1px solid #2a2a3e",
-              color: "#6b6f7e",
-              borderRadius: "6px",
-              width: "32px",
-              height: "32px",
-              cursor: "pointer",
-              fontSize: "1rem",
-            }}
-          >
+          <button type="button" onClick={onClose} aria-label="Close" className="btn btn-ghost modal-close">
             ×
           </button>
         </div>
 
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", borderBottom: "1px solid #1e1e2e" }}>
+        <div className="modal-tabs">
           {TABS.map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTab(t)}
-              style={{
-                background: "none",
-                border: "none",
-                padding: "0.5rem 1rem",
-                cursor: "pointer",
-                fontSize: "0.875rem",
-                fontWeight: tab === t ? 700 : 400,
-                color: tab === t ? c.text : "#6b6f7e",
-                borderBottom: tab === t ? `2px solid ${c.border}` : "2px solid transparent",
-              }}
+              className="modal-tab"
+              style={{ color: tab === t ? c.text : "#6b6f7e", borderBottomColor: tab === t ? c.border : "transparent" }}
             >
               {t}
             </button>
           ))}
         </div>
 
-        {tab === "Overview" && <p style={{ color: "#a0a4b0", lineHeight: 1.8, margin: 0 }}>{project.description}</p>}
-        {tab === "Stack" && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                style={{
-                  padding: "0.4rem 0.9rem",
-                  background: c.bg,
-                  border: `1px solid ${c.border}40`,
-                  borderRadius: "6px",
-                  color: c.text,
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  fontFamily: "monospace",
-                }}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        )}
-        {tab === "Features" && (
-          <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-            {project.features.map((f) => (
-              <li
-                key={f}
-                style={{
-                  padding: "0.75rem 0",
-                  borderBottom: "1px solid #1e1e2e",
-                  color: "#a0a4b0",
-                  fontSize: "0.9rem",
-                  display: "flex",
-                  gap: "0.75rem",
-                }}
-              >
-                <span style={{ color: c.text, fontWeight: 700 }}>→</span>
-                {f}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+        <AnimatePresence mode="wait">
+          <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+            {tab === "Overview" && <p className="modal-text">{project.description}</p>}
+            {tab === "Stack" && (
+              <div className="tag-row">
+                {project.tech.map((t) => (
+                  <span key={t} className="tag" style={{ color: c.text, background: c.bg, borderColor: `${c.border}40` }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+            {tab === "Features" && (
+              <ul className="modal-list">
+                {project.features.map((f) => (
+                  <li key={f} className="modal-list-item">
+                    <span style={{ color: c.text }}>→</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   )
 }
 
 export default function Projects() {
   const [selected, setSelected] = useState<Project | null>(null)
+  const closeModal = useCallback(() => setSelected(null), [])
 
   return (
-    <section id="projects" style={{ padding: "6rem 2rem" }}>
-      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-        <SectionHeader
-          label="// Projects"
-          title="Projects"
-          subtitle="Click any card to see overview, stack, and features"
-          accent="#7FFFD4"
-        />
+    <AnimatedSection id="projects" className="section">
+      <div className="section-inner">
+        <SectionHeader label="// Projects" title="Projects" subtitle="Click any card to explore overview, stack, and features" accent="#7FFFD4" />
 
-        {projectGroups.map((group) => (
-          <div key={group.title} style={{ marginBottom: "4rem" }}>
-            <div style={{ marginBottom: "1.75rem" }}>
-              <h3 style={{ margin: "0 0 0.35rem", fontSize: "1.35rem", fontWeight: 800, color: "#e8e6f0" }}>{group.title}</h3>
-              <p style={{ margin: 0, color: "#6b6f7e", fontSize: "0.92rem" }}>{group.subtitle}</p>
-            </div>
+        {projectGroups.map((group, gi) => (
+          <div key={group.title} className="project-group">
+            <FadeIn delay={gi * 0.04}>
+              <h3 className="group-title">{group.title}</h3>
+              <p className="group-subtitle">{group.subtitle}</p>
+            </FadeIn>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                gap: "1.25rem",
-              }}
-            >
+            <Stagger className="card-grid">
               {group.projects.map((p) => {
                 const c = ACCENT_COLORS[p.accent]
                 return (
-                  <article
-                    key={p.title}
-                    onClick={() => setSelected(p)}
-                    style={{
-                      background: "#111118",
-                      border: `1px solid ${c.border}30`,
-                      borderRadius: "12px",
-                      padding: "1.5rem",
-                      cursor: "pointer",
-                      transition: "all 0.25s",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget as HTMLElement
-                      el.style.borderColor = c.border
-                      el.style.transform = "translateY(-4px)"
-                      el.style.boxShadow = `0 12px 32px ${c.border}20`
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget as HTMLElement
-                      el.style.borderColor = `${c.border}30`
-                      el.style.transform = "translateY(0)"
-                      el.style.boxShadow = "none"
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: "3px",
-                        background: `linear-gradient(90deg, ${c.border}, transparent)`,
-                      }}
-                    />
-
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
-                      <span
-                        style={{
-                          fontSize: "0.68rem",
-                          fontFamily: "monospace",
-                          color: c.text,
-                          background: c.bg,
-                          padding: "0.25rem 0.6rem",
-                          borderRadius: "4px",
-                          fontWeight: 700,
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {p.category}
-                      </span>
-                      <span style={{ color: "#6b6f7e", fontSize: "0.78rem", fontFamily: "monospace" }}>{p.year}</span>
-                    </div>
-
-                    <h4 style={{ margin: "0 0 0.75rem", fontSize: "1.15rem", fontWeight: 800, color: "#e8e6f0" }}>{p.title}</h4>
-                    <p style={{ margin: "0 0 1rem", fontSize: "0.85rem", color: "#6b6f7e", lineHeight: 1.65 }}>
-                      {p.description.slice(0, 120)}…
-                    </p>
-
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginBottom: "1rem" }}>
-                      {p.tech.slice(0, 3).map((t) => (
-                        <span
-                          key={t}
-                          style={{
-                            fontSize: "0.7rem",
-                            fontFamily: "monospace",
-                            color: "#6b6f7e",
-                            background: "#0A0A0F",
-                            border: "1px solid #1e1e2e",
-                            padding: "0.2rem 0.5rem",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          {t}
+                  <StaggerItem key={p.title}>
+                    <SpotlightCard accent={c.border} onClick={() => setSelected(p)} className="project-card">
+                      <div className="card-accent-bar" style={{ background: `linear-gradient(90deg, ${c.border}, transparent)` }} />
+                      <div className="project-meta">
+                        <span className="project-cat" style={{ color: c.text, background: c.bg }}>
+                          {p.category}
                         </span>
-                      ))}
-                    </div>
-
-                    <span style={{ color: c.text, fontSize: "0.82rem", fontWeight: 700, fontFamily: "monospace" }}>
-                      View Project →
-                    </span>
-                  </article>
+                        <span className="project-year">{p.year}</span>
+                      </div>
+                      <h4 className="card-title-sm">{p.title}</h4>
+                      <p className="card-body">{p.description.slice(0, 120)}…</p>
+                      <div className="tag-row">
+                        {p.tech.slice(0, 3).map((t) => (
+                          <span key={t} className="tag tag-muted">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="card-link" style={{ color: c.text }}>
+                        View Project →
+                      </span>
+                    </SpotlightCard>
+                  </StaggerItem>
                 )
               })}
-            </div>
+            </Stagger>
           </div>
         ))}
       </div>
 
-      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
-    </section>
+      <AnimatePresence>{selected && <ProjectModal project={selected} onClose={closeModal} />}</AnimatePresence>
+    </AnimatedSection>
   )
 }

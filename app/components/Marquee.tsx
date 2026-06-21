@@ -1,10 +1,17 @@
+"use client"
+import { motion } from "framer-motion"
 import { marqueeItems } from "@/lib/data"
 
 export default function Marquee() {
   const items = [...marqueeItems, ...marqueeItems]
 
   return (
-    <div
+    <motion.div
+      className="marquee-wrap"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.6 }}
       style={{
         borderTop: "1px solid #1e1e2e",
         borderBottom: "1px solid #1e1e2e",
@@ -16,27 +23,12 @@ export default function Marquee() {
     >
       <div className="marquee-track">
         {items.map((item, i) => (
-          <span
-            key={`${item}-${i}`}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "1.5rem",
-              paddingRight: "1.5rem",
-              color: "#6b6f7e",
-              fontFamily: "monospace",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
-            }}
-          >
+          <span key={`${item}-${i}`} className="marquee-item">
             {item}
-            <span style={{ color: "#7FFFD4" }}>•</span>
+            <span className="marquee-dot">•</span>
           </span>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }

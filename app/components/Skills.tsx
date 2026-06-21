@@ -1,111 +1,100 @@
 "use client"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { useState } from "react"
 import { skills } from "@/lib/data"
 import SectionHeader from "./SectionHeader"
+import AnimatedSection from "./AnimatedSection"
+import { Stagger, StaggerItem } from "./motion/Stagger"
 
-const CAT_COLORS: Record<string, string> = {
-  Frontend: "#7FFFD4",
-  Backend: "#FF7E87",
-  Database: "#FFC857",
-  Languages: "#B48EF7",
-  "Cloud & DevOps": "#7FFFD4",
-  "Testing & Tools": "#FF7E87",
+const CAT_META: Record<string, { color: string; icon: string }> = {
+  Frontend: { color: "#7FFFD4", icon: "⬡" },
+  Backend: { color: "#FF7E87", icon: "⚙" },
+  Database: { color: "#FFC857", icon: "🗄" },
+  Languages: { color: "#B48EF7", icon: "{ }" },
+  "Cloud & DevOps": { color: "#7FFFD4", icon: "☁" },
+  "Testing & Tools": { color: "#FF7E87", icon: "⚗" },
 }
 
 export default function Skills() {
   const [open, setOpen] = useState<string | null>("Frontend")
+  const reduce = useReducedMotion()
 
   return (
-    <section id="skills" style={{ padding: "6rem 2rem", background: "#0D0D14" }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+    <AnimatedSection id="skills" className="section section-alt">
+      <div className="section-inner-narrow">
         <SectionHeader label="// Skills" title="My Skills" subtitle="Technologies I use to build and ship products" accent="#FF7E87" />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <Stagger style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {Object.entries(skills).map(([cat, items]) => {
-            const color = CAT_COLORS[cat] ?? "#7FFFD4"
+            const meta = CAT_META[cat] ?? { color: "#7FFFD4", icon: "◆" }
+            const { color, icon } = meta
             const isOpen = open === cat
 
             return (
-              <div
-                key={cat}
-                style={{
-                  background: "#111118",
-                  border: `1px solid ${isOpen ? `${color}60` : "#1e1e2e"}`,
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  transition: "border-color 0.3s",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpen(isOpen ? null : cat)}
-                  style={{
-                    width: "100%",
-                    background: "none",
-                    border: "none",
-                    padding: "1.25rem 1.5rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                    color: "#e8e6f0",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-                    <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{cat}</span>
-                    <span style={{ fontSize: "0.75rem", color, fontFamily: "monospace" }}>{items.length} skills</span>
-                    {!isOpen && (
-                      <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
-                        {items.slice(0, 4).map((skill) => (
-                          <span
-                            key={skill}
-                            style={{
-                              fontSize: "0.68rem",
-                              color: "#6b6f7e",
-                              fontFamily: "monospace",
-                              background: "#0A0A0F",
-                              border: "1px solid #1e1e2e",
-                              padding: "0.15rem 0.45rem",
-                              borderRadius: "4px",
-                            }}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <span style={{ color, transition: "transform 0.3s", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
-                    ▾
-                  </span>
-                </button>
-
-                {isOpen && (
-                  <div style={{ padding: "0 1.5rem 1.5rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    {items.map((skill) => (
-                      <span
-                        key={skill}
-                        style={{
-                          padding: "0.4rem 1rem",
-                          background: `${color}12`,
-                          border: `1px solid ${color}40`,
-                          borderRadius: "8px",
-                          color,
-                          fontSize: "0.82rem",
-                          fontWeight: 600,
-                          fontFamily: "monospace",
-                        }}
-                      >
-                        {skill}
+              <StaggerItem key={cat}>
+                <div className={`skill-panel${isOpen ? " skill-panel--open" : ""}`} style={{ borderColor: isOpen ? `${color}55` : undefined }}>
+                  <button type="button" onClick={() => setOpen(isOpen ? null : cat)} className="skill-trigger">
+                    <div className="skill-trigger-left">
+                      <span className="skill-icon" style={{ color }}>
+                        {icon}
                       </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      <span className="skill-cat">{cat}</span>
+                      <span className="skill-count" style={{ color }}>
+                        {items.length} skills
+                      </span>
+                      {!isOpen && (
+                        <div className="tag-row">
+                          {items.slice(0, 4).map((skill) => (
+                            <span key={skill} className="tag tag-muted">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <motion.span animate={{ rotate: isOpen ? 180 : 0 }} style={{ color }}>
+                      ▾
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="skill-tags">
+                          {items.map((skill, index) =>
+                            reduce ? (
+                              <span key={skill} className="tag" style={{ color, background: `${color}12`, borderColor: `${color}40` }}>
+                                {skill}
+                              </span>
+                            ) : (
+                              <motion.span
+                                key={skill}
+                                initial={{ opacity: 0, scale: 0.85 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: index * 0.03 }}
+                                className="tag"
+                                style={{ color, background: `${color}12`, borderColor: `${color}40` }}
+                              >
+                                {skill}
+                              </motion.span>
+                            )
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </Stagger>
       </div>
-    </section>
+    </AnimatedSection>
   )
 }
