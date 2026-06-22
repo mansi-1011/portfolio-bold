@@ -8,8 +8,8 @@ export const personalInfo = {
     "I'm a Lead Full-Stack Developer with 5+ years of experience building and owning production web applications across React, Angular, SvelteKit, and backend systems with Node.js, Python FastAPI, and PHP. I lead architecture decisions, mentor developers, integrate secure payment systems, manage monorepo codebases, and deploy on AWS, Vercel, DigitalOcean, and Hetzner.",
   email: "manasipatoliya@gmail.com",
   phone: "+91 8490828266",
-  linkedin: "https://linkedin.com/in/mansipatoliya",
-  github: "https://github.com/mansipatoliya",
+  linkedin: "https://www.linkedin.com/in/mansi-p-b3077b197",
+  github: "https://github.com/mansi-1011",
   location: "Surat, India · Available for remote (US/EU overlap)",
   availability: "Open to freelance & full-time remote roles",
 }
