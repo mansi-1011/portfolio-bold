@@ -57,7 +57,8 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (error) {
+    console.error("Contact form Firebase error:", error)
     return NextResponse.json({ error: "Failed to save your message." }, { status: 500 })
   }
 }
