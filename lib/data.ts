@@ -412,5 +412,5 @@ export const education: EducationEntry[] = [
 
 export const socialLinks = [
   { label: "LinkedIn", href: personalInfo.linkedin },
-  { label: "Email", href: `mailto:${personalInfo.email}` },
+  { label: personalInfo.email, href: `mailto:${personalInfo.email}` },
 ]

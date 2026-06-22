@@ -1481,6 +1481,13 @@ h1, h2, h3, h4 { font-family: var(--font-family), system-ui, sans-serif; letter-
   border: 1px solid rgba(127, 255, 212, 0.35);
 }
 
+.form-error {
+  margin-top: 0.85rem;
+  color: var(--coral);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+}
+
 @keyframes gridPulse {
   0%, 100% { opacity: 0.45; }
   50% { opacity: 0.85; }

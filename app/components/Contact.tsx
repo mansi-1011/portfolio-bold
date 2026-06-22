@@ -6,7 +6,7 @@ import { Check, Clock, ICON_SIZE_LG } from "@/lib/icons"
 import AnimatedSection from "./AnimatedSection"
 import { Stagger, StaggerItem } from "./motion/Stagger"
 
-function MagneticSubmit({ children }: { children: React.ReactNode }) {
+function MagneticSubmit({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) {
   const ref = useRef<HTMLButtonElement>(null)
   const reduce = useReducedMotion()
   const x = useSpring(0, { stiffness: 200, damping: 18 })
@@ -31,6 +31,7 @@ function MagneticSubmit({ children }: { children: React.ReactNode }) {
       type="submit"
       className="btn btn-mint btn-full btn-glow"
       style={{ x, y }}
+      disabled={disabled}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       whileHover={reduce ? undefined : { scale: 1.02 }}
@@ -45,19 +46,42 @@ function MagneticSubmit({ children }: { children: React.ReactNode }) {
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
   const reduce = useReducedMotion()
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setError("")
+    setLoading(true)
+
     const data = new FormData(e.currentTarget)
-    const name = String(data.get("name") ?? "")
-    const email = String(data.get("email") ?? "")
-    const type = String(data.get("type") ?? "")
-    const message = String(data.get("message") ?? "")
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name}`)
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nProject Type: ${type}\n\n${message}`)
-    window.location.href = `mailto:${personalInfo.email}?subject=${subject}&body=${body}`
-    setSent(true)
+    const payload = {
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      type: String(data.get("type") ?? ""),
+      message: String(data.get("message") ?? ""),
+    }
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const result = (await response.json().catch(() => null)) as { error?: string } | null
+        throw new Error(result?.error ?? "Failed to send message.")
+      }
+
+      e.currentTarget.reset()
+      setSent(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -114,7 +138,8 @@ export default function Contact() {
                   <textarea name="message" required rows={4} placeholder=" " />
                   <span>Message</span>
                 </label>
-                <MagneticSubmit>Send Message</MagneticSubmit>
+                <MagneticSubmit disabled={loading}>{loading ? "Sending…" : "Send Message"}</MagneticSubmit>
+                {error && <p className="form-error">{error}</p>}
                 <AnimatePresence>
                   {sent && (
                     <motion.div
@@ -132,7 +157,7 @@ export default function Contact() {
                       >
                         <Check size={18} strokeWidth={2.5} />
                       </motion.span>
-                      <span>Opening your email client…</span>
+                      <span>Message sent! I&apos;ll get back to you soon.</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
