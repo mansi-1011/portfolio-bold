@@ -55,7 +55,8 @@ export default function Contact() {
     setError("")
     setLoading(true)
 
-    const data = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const data = new FormData(form)
     const payload = {
       name: String(data.get("name") ?? ""),
       email: String(data.get("email") ?? ""),
@@ -75,7 +76,7 @@ export default function Contact() {
         throw new Error(result?.error ?? "Failed to send message.")
       }
 
-      e.currentTarget.reset()
+      form.reset()
       setSent(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send message.")
