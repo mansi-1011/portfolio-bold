@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { personalInfo } from "@/lib/data"
-import { fontBody, fontDisplay } from "./fonts"
+import { fontFamily } from "./fonts"
 import MotionProvider from "./components/MotionProvider"
 import ScrollProgress from "./components/ScrollProgress"
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fontDisplay.variable} ${fontBody.variable}`}>
+    <html lang="en" className={fontFamily.variable}>
       <body>
         <MotionProvider>
           <ScrollProgress />

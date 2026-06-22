@@ -29,7 +29,7 @@ html.lenis, html.lenis-smooth { scroll-behavior: auto; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-family), system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.65;
   margin: 0;
@@ -37,7 +37,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter-spacing: -0.02em; }
+h1, h2, h3, h4 { font-family: var(--font-family), system-ui, sans-serif; letter-spacing: -0.02em; }
 
 ::selection { background: rgba(127, 255, 212, 0.2); color: var(--mint); }
 
@@ -98,7 +98,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
   cursor: pointer;
   position: relative;
   transition: transform 0.2s, background 0.2s;
-  font-family: var(--font-body);
+  font-family: var(--font-family);
 }
 
 .btn-mint {
@@ -164,7 +164,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
   background: rgba(127, 255, 212, 0.12);
   border: 1px solid rgba(127, 255, 212, 0.35);
   color: var(--mint);
-  font-family: var(--font-display);
+  font-family: var(--font-family);
   font-weight: 800;
   font-size: 0.85rem;
   text-decoration: none;
@@ -237,7 +237,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
   text-decoration: none;
   font-size: 1.1rem;
   font-weight: 600;
-  font-family: var(--font-display);
+  font-family: var(--font-family);
 }
 
 /* Hero v2 */
@@ -359,7 +359,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
 }
 
 .hero-v2-initials {
-  font-family: var(--font-display);
+  font-family: var(--font-family);
   font-size: 5rem;
   font-weight: 800;
   opacity: 0.25;
@@ -426,7 +426,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
 
 .stat-value {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-family);
   font-size: 1.75rem;
   font-weight: 800;
 }
@@ -560,7 +560,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
 }
 
 .project-slide-watermark {
-  font-family: var(--font-display);
+  font-family: var(--font-family);
   font-size: 2rem;
   font-weight: 800;
   opacity: 0.2;
@@ -1166,7 +1166,7 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter
   border: 1px solid rgba(127, 255, 212, 0.35);
   background: rgba(127, 255, 212, 0.08);
   color: var(--mint);
-  font-family: var(--font-display);
+  font-family: var(--font-family);
   font-weight: 800;
   font-size: 1rem;
 }
