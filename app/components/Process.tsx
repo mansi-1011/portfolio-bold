@@ -58,34 +58,36 @@ export default function Process() {
           </StaggerItem>
         </Stagger>
 
-        <div className="workflow-track" aria-hidden>
-          <div ref={trackRef} className="workflow-track-fill" />
-        </div>
-        <Stagger className="workflow-steps">
-          {steps.map((s) => (
-            <StaggerItem key={s.label} variant="scaleIn">
-              <motion.div
-                className="workflow-step"
-                whileHover={reduce ? undefined : { y: -6 }}
-                transition={{ duration: 0.3 }}
-                data-cursor="hover"
-              >
-                <motion.div className="workflow-circle workflow-circle--pulse">
-                  <span className="workflow-num">{s.num}</span>
-                  <motion.span
-                    className="workflow-icon"
-                    animate={reduce ? undefined : { scale: [1, 1.08, 1] }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <s.Icon size={ICON_SIZE} strokeWidth={2} />
-                  </motion.span>
+        <div className="workflow-flow">
+          <div className="workflow-track" aria-hidden>
+            <div ref={trackRef} className="workflow-track-fill" />
+          </div>
+          <Stagger className="workflow-steps">
+            {steps.map((s) => (
+              <StaggerItem key={s.label} variant="scaleIn">
+                <motion.div
+                  className="workflow-step"
+                  whileHover={reduce ? undefined : { y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  data-cursor="hover"
+                >
+                  <motion.div className="workflow-circle workflow-circle--pulse">
+                    <span className="workflow-num">{s.num}</span>
+                    <motion.span
+                      className="workflow-icon"
+                      animate={reduce ? undefined : { scale: [1, 1.08, 1] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <s.Icon size={ICON_SIZE} strokeWidth={2} />
+                    </motion.span>
+                  </motion.div>
+                  <h3>{s.label}</h3>
+                  <p>{s.body.slice(0, 90)}…</p>
                 </motion.div>
-                <h3>{s.label}</h3>
-                <p>{s.body.slice(0, 90)}…</p>
-              </motion.div>
-            </StaggerItem>
-          ))}
-        </Stagger>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
       </div>
     </AnimatedSection>
   )

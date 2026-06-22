@@ -19,7 +19,7 @@ export default function TrustMetrics() {
   const reduce = useReducedMotion()
 
   return (
-    <AnimatedSection id="trust" className="section section-compact">
+    <AnimatedSection id="trust" className="section">
       <div className="section-inner">
         <Stagger className="stats-row">
           {stats.map((s) => (

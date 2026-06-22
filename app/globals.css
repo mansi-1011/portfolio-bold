@@ -19,8 +19,6 @@
   --radius: 16px;
   --radius-sm: 12px;
   --radius-pill: 999px;
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
 }
 
@@ -31,7 +29,7 @@ html.lenis, html.lenis-smooth { scroll-behavior: auto; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-body);
+  font-family: var(--font-body), system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.65;
   margin: 0;
@@ -39,7 +37,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; letter-spacing: -0.02em; }
 
 ::selection { background: rgba(127, 255, 212, 0.2); color: var(--mint); }
 
@@ -249,7 +247,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 6rem var(--section-x) 4rem;
+  padding: 6rem var(--section-x) clamp(3rem, 6vw, 5rem);
 }
 
 .hero-v2-glow {
@@ -771,6 +769,31 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
 /* Workflow */
 .workflow-head { text-align: center; margin-bottom: 3rem; }
 
+.workflow-flow {
+  position: relative;
+}
+
+.workflow-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 32px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  z-index: 0;
+  overflow: hidden;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.workflow-track-fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: 0% 50%;
+  background: linear-gradient(90deg, var(--mint), var(--purple));
+  will-change: transform;
+}
+
 .workflow-steps {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -785,11 +808,12 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
 
 .workflow-circle {
+  position: relative;
   width: 64px;
   height: 64px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: var(--glass);
+  background: var(--bg-soft);
   backdrop-filter: blur(12px);
   margin: 0 auto 1rem;
   display: flex;
@@ -797,6 +821,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 30px rgba(127,255,212,0.06);
+  z-index: 1;
 }
 
 .workflow-num {
@@ -1365,24 +1390,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
   box-shadow: 0 0 16px rgba(127, 255, 212, 0.65), 0 0 32px rgba(127, 255, 212, 0.25);
 }
 
-.workflow-track {
-  height: 2px;
-  background: rgba(255, 255, 255, 0.06);
-  margin-bottom: -3.5rem;
-  position: relative;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.workflow-track-fill {
-  height: 100%;
-  width: 100%;
-  transform-origin: 0% 50%;
-  background: linear-gradient(90deg, var(--mint), var(--purple));
-  will-change: transform;
-}
-
-.workflow-circle { position: relative; }
 .workflow-circle--pulse::after {
   content: "";
   position: absolute;
